@@ -1,0 +1,11 @@
+.*SHM*
+output/*
+*.idx
+*.idf
+*.hst
+*.pdf
+last*
+backup/*
+*.o
+*.log
+runlog.txt
