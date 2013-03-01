@@ -20,7 +20,7 @@
 #include "midas.h"
 #include "mcstd.h"
 #include "mvmestd.h"
-#include "experim.h"
+//#include "experim.h"
 #include "vme/v792n.h"
 
 /* make frontend functions callable from the C framework */
@@ -86,7 +86,9 @@ EQUIPMENT equipment[] = {
 #else
      EQ_POLLED,              /* equipment type */
 #endif
-     LAM_SOURCE(CRATE, LAM_STATION(SLOT_ADC)), /* event source */
+		 // no idea about functionality of the LAM_SOURCE
+     //LAM_SOURCE(CRATE, LAM_STATION(SLOT_ADC)), [> event source <]
+     LAM_SOURCE(0, 0xFFFFFF), /* event source crate 0, all stations */
      "MIDAS",                /* format */
      TRUE,                   /* enabled */
      RO_RUNNING |            /* read only when running */
@@ -282,7 +284,7 @@ INT interrupt_configure(INT cmd, INT source, POINTER_T adr)
 INT read_v792n(INT base, const char *bk_name, char *pevent, INT n_chn)
 {
    INT i;
-   INT nentry = 0, counter;
+   INT nentry = 0; 
    DWORD data[V792N_MAX_CHANNELS+2];
    WORD *pdata;
 
@@ -315,7 +317,7 @@ INT read_v792n(INT base, const char *bk_name, char *pevent, INT n_chn)
 
    return nentry;
 }
-#endif
+//#endif
 
 INT read_trigger_event(char *pevent, INT off)
 {

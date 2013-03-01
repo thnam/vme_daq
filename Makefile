@@ -42,7 +42,7 @@ OSFLAGS = -DOS_LINUX -DLINUX -DUNIX -Dextname
 CFLAGS = -g -O2 -Wall -Wno-write-strings
 # add to compile in 32-bit mode
 # OSFLAGS += -m32
-LIBS = -lm -lz -lutil -lnsl -lpthread
+LIBS = -lm -lz -lutil -lnsl -lpthread -lrt
 endif
 
 #-----------------------
@@ -97,15 +97,15 @@ MODULES    = adccalib.o adcsum.o scaler.o
 #-------------------------------------------------------------------
 # Drivers needed by the frontend program
 #
-TRFE_DRIVERS  = v1718.o v792n.o
-TRFE_LIBS     = -lCAENVME
+FE_DRIVERS  = v1718.o v792n.o
+FE_LIBS     = -lCAENVME
 
 #-------------------------------------------------------------------
 # Frontend code name defaulted to frontend in this example.
 # comment out the line and run your own frontend as follow:
 # gmake UFE=my_frontend
 #
-TRFE  = trfrontend
+FE  = frontend
 
 ####################################################################
 # Lines below here should not be edited
@@ -122,14 +122,19 @@ CFLAGS += -I$(DRV_DIR)/vme
 CFLAGS += -I$(DRV_DIR)/vme/CAENVMElib/include
 LDFLAGS +=
 
-all: $(TRFE) analyzer
+all: $(FE) #analyzer
 
 noenv: all
 
-$(TRFE): $(LIB) $(LIB_DIR)/mfe.o $(TRFE_DRIVERS) $(TRFE).c $(SRC_DIR)/cnaf_callback.c
-	$(CC) $(CFLAGS) $(OSFLAGS) -o $(TRFE) $(TRFE).c \
-	$(SRC_DIR)/cnaf_callback.c $(TRFE_DRIVERS) $(LIB_DIR)/mfe.o $(LIB) \
-	$(LDFEFLAGS) $(LIBS) $(TRFE_LIBS)
+$(FE): $(LIB) $(LIB_DIR)/mfe.o $(FE_DRIVERS) $(FE).c 
+	$(CC) $(CFLAGS) $(OSFLAGS) -o $(FE) $(FE).c \
+	$(FE_DRIVERS) $(LIB_DIR)/mfe.o $(LIB) \
+	$(LDFEFLAGS) $(LIBS) $(FE_LIBS)
+
+#$(FE): $(LIB) $(LIB_DIR)/mfe.o $(FE_DRIVERS) $(FE).c $(SRC_DIR)/cnaf_callback.c
+	#$(CC) $(CFLAGS) $(OSFLAGS) -o $(FE) $(FE).c \
+	#$(SRC_DIR)/cnaf_callback.c $(FE_DRIVERS) $(LIB_DIR)/mfe.o $(LIB) \
+	#$(LDFEFLAGS) $(LIBS) $(FE_LIBS)
 
 %.o: $(DRV_DIR)/vme/%.c
 	$(CC) $(CFLAGS) $(OSFLAGS) -o $@ -c $<
