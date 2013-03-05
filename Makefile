@@ -97,7 +97,8 @@ MODULES    = adccalib.o adcsum.o scaler.o
 #-------------------------------------------------------------------
 # Drivers needed by the frontend program
 #
-FE_DRIVERS  = v1718.o v792n.o
+#FE_DRIVERS  = v1718.o v792n.o
+FE_DRIVERS  = v792n.o v2718.o
 FE_LIBS     = -lCAENVME
 
 #-------------------------------------------------------------------
