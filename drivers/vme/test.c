@@ -34,12 +34,12 @@ int main(int argc, char** argv)
 	MVME_INTERFACE *myvme;
 	int status = mvme_open(&myvme, 0);
 	mvme_sysreset(myvme);
-	//mvme_set_am(myvme, MVME_AM_A32);
+	mvme_set_am(myvme, MVME_AM_A32_ND);
 
-	WORD buff16;
+	v792n_Status(myvme,V792_BASE);
+	//WORD buff16;
 	//buff16 = v792n_Read16(myvme,V792_BASE,0x1000);
-	CAENVME_ReadCycle(BHandle,V792_BASE+0x1000, &buff16, cvA32_U_DATA,2);
-	printf("%X\n",buff16);
+	//printf("%X\n",buff16);
 
 	// Close
 	CAENVME_End(BHandle);
