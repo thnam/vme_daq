@@ -570,16 +570,27 @@ int v792_EventReadBLT(MVME_INTERFACE *mvme, DWORD base, DWORD *pdest, int *nentr
 	//unsigned int nread = tmp.header.cnt;
 	mvme_get_blt(mvme, &bltmode);
 	mvme_set_blt(mvme, MVME_BLT_BLT32);
-	nread = 34;
-	*nentry = mvme_read(mvme, pdest, base + 0x0, nread);
+	nread = 39;
+	*nentry = mvme_read(mvme, pdest, base + 0x0, nread*4);
 	mvme_set_blt(mvme, bltmode);
 
 	int i;
-	for (i = 0; i < *nentry; i++) 
+	for (i = 0; i < *nentry/4; i++) 
 		v792_printEntry((v792_Data*)&pdest[i]);
 
   mvme_set_dmode(mvme, cmode);
   return *nentry;
+}
+
+int v792_BusErrorEnable(MVME_INTERFACE *mvme, DWORD base)
+{
+	v792_ControlRegister1Write(mvme, base,0x20); // bit 5 
+	return 0;
+}
+int v792_isBusErrorEnable(MVME_INTERFACE *mvme, DWORD base)
+{
+	WORD pat = v792_ControlRegister1Read(mvme,base);
+	return (pat & 0x20);
 }
 
 /*****************************************************************/

@@ -92,6 +92,8 @@ void v792_ControlRegister1Write(MVME_INTERFACE *mvme, DWORD base, WORD pat);
 WORD v792_ControlRegister1Read(MVME_INTERFACE *mvme, DWORD base);
 void v792_Trigger(MVME_INTERFACE *mvme, DWORD base);
 int  v792_isPresent(MVME_INTERFACE *mvme, DWORD base);
+int  v792_BusErrorEnable(MVME_INTERFACE *mvme, DWORD base);
+int  v792_isBusErrorEnable(MVME_INTERFACE *mvme, DWORD base);
 
   enum v792_DataType {
     v792_typeMeasurement=0,
