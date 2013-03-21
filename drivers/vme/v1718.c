@@ -196,15 +196,17 @@ int mvme_read(MVME_INTERFACE *vme, void *dst, mvme_addr_t vme_addr, mvme_size_t 
       /* BLT */
       else
          status = CAENVME_BLTReadCycle(hvme, vme_addr, dst, n_bytes, vme->am, cvD16, &n);
+   } 
    /* D32 */
-   } else if (vme->dmode == MVME_DMODE_D32) {
+	 else if (vme->dmode == MVME_DMODE_D32) {
       /* normal I/O */
       if (vme->blt_mode == MVME_BLT_NONE) {
          for (i=0 ; i<(n_bytes>>2) ; i++)
             status = CAENVME_ReadCycle(hvme, vme_addr, dst+(i<<2), vme->am, cvD32);
          n = n_bytes;
+      } 
       /* FIFO BLT */
-      } else if (vme->blt_mode == MVME_BLT_BLT32FIFO)
+			else if (vme->blt_mode == MVME_BLT_BLT32FIFO)
 			{
 				short cfifo;
 				CAENVME_GetFIFOMode(hvme, &cfifo);
@@ -214,7 +216,11 @@ int mvme_read(MVME_INTERFACE *vme, void *dst, mvme_addr_t vme_addr, mvme_size_t 
 			}
       /* BLT */
       else
+			{
          status = CAENVME_BLTReadCycle(hvme, vme_addr, dst, n_bytes, vme->am, cvD32, &n);
+				 //CAENVME_DecodeError(status);
+				//if (status == cvBusError) return n;
+			}
    /* D64 */
    } else if (vme->dmode == MVME_DMODE_D64) {
       /* FIFO MBLT */

@@ -570,7 +570,7 @@ int v792_EventReadBLT(MVME_INTERFACE *mvme, DWORD base, DWORD *pdest, int *nentr
 	//unsigned int nread = tmp.header.cnt;
 	mvme_get_blt(mvme, &bltmode);
 	mvme_set_blt(mvme, MVME_BLT_BLT32);
-	nread = 39;
+	nread = 35;
 	*nentry = mvme_read(mvme, pdest, base + 0x0, nread*4);
 	mvme_set_blt(mvme, bltmode);
 
