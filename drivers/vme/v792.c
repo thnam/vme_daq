@@ -443,7 +443,8 @@ int  v792_Setup(MVME_INTERFACE *mvme, DWORD base, int mode)
 /*****************************************************************/
 void  v792_Status(MVME_INTERFACE *mvme, DWORD base)
 {
-  int status, cmode, i;
+  unsigned int status;
+	int cmode, i;
   WORD threshold[V792_MAX_CHANNELS];
 
   mvme_get_dmode(mvme, &cmode);
@@ -551,6 +552,34 @@ int v792_isPresent(MVME_INTERFACE *mvme, DWORD base)
     return 0;
   else
     return 1;
+}
+
+/*****************************************************************/
+int v792_EventReadBLT(MVME_INTERFACE *mvme, DWORD base, DWORD *pdest, int *nentry)
+{
+  DWORD hdata;
+	v792_Data tmp;
+  int   cmode;
+	int bltmode;
+	int nread;
+
+  mvme_get_dmode(mvme, &cmode);
+  mvme_set_dmode(mvme, MVME_DMODE_D32);
+
+  *nentry = 0;
+	//unsigned int nread = tmp.header.cnt;
+	mvme_get_blt(mvme, &bltmode);
+	mvme_set_blt(mvme, MVME_BLT_BLT32);
+	nread = 34;
+	*nentry = mvme_read(mvme, pdest, base + 0x0, nread);
+	mvme_set_blt(mvme, bltmode);
+
+	int i;
+	for (i = 0; i < *nentry; i++) 
+		v792_printEntry((v792_Data*)&pdest[i]);
+
+  mvme_set_dmode(mvme, cmode);
+  return *nentry;
 }
 
 /*****************************************************************/

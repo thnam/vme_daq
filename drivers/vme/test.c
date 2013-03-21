@@ -43,27 +43,28 @@ int main(int argc, char** argv)
 	v792_Setup(myvme,V792_BASE,2); //enable empty events, over range & under thr.
 	int lam = v792_DataReady(myvme,V792_BASE);
 	printf("lam: %d\n",lam);
-	//v792_OnlineSet(myvme, V792_BASE);
-	/*v792_Status(myvme,V792_BASE);*/
 	//CAENVME_SetOutputConf(BHandle,cvOutput0,cvDirect,cvActiveHigh,cvManualSW);
-	v1718_PulserConfSet(myvme,v1718_pulserA,1000,200,1);
-	usleep(100);
+	v792_DataClear(myvme,V792_BASE);
+	//v1718_PulserConfSet(myvme,v1718_pulserA,1000,200,1);
 	v1718_PulserStart(myvme,v1718_pulserA);
-	/*v1718_PulserStop(myvme,v1718_pulserA);*/
+	//v1718_PulserStop(myvme,v1718_pulserA);
 	lam = v792_DataReady(myvme,V792_BASE);
 	printf("lam: %d\n",lam);
 	DWORD buff[100];
 	int nword_read;
-	v792_EventRead(myvme,V792_BASE,buff,&nword_read);
+	// single read
+	v792_EventReadBLT(myvme,V792_BASE,buff,&nword_read);
 	printf("nword_read %d\n",nword_read);
 
-	int i;
-	for (i = 0; i < nword_read; i++) 
-	{
-		v792_printEntry((v792_Data*)&buff[i]);
+	// blt trial
+	
+	//int i;
+	//for (i = 0; i < nword_read; i++) 
+	//{
+		//v792_printEntry((v792_Data*)&buff[i]);
 		//showbits(buff[i]);
 		//printf("\n");
-	}
+	//}
 
 	// Close
 	CAENVME_End(BHandle);

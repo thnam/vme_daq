@@ -62,6 +62,7 @@ void v792_CrateSet(MVME_INTERFACE *mvme, DWORD base, DWORD *evtcnt);
 void v792_DelayClearSet(MVME_INTERFACE *mvme, DWORD base, int delay);
 int  v792_DataRead(MVME_INTERFACE *mvme, DWORD base, DWORD *pdest, int *nentry);
 int  v792_EventRead(MVME_INTERFACE *mvme, DWORD base, DWORD *pdest, int *nentry);
+int  v792_EventReadBLT(MVME_INTERFACE *mvme, DWORD base, DWORD *pdest, int *nentry);
 int  v792_ThresholdWrite(MVME_INTERFACE *mvme, DWORD base, WORD *threshold);
 int  v792_ThresholdRead(MVME_INTERFACE *mvme, DWORD base, WORD *threshold);
 int  v792_DataReady(MVME_INTERFACE *mvme, DWORD base);

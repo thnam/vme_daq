@@ -64,6 +64,7 @@ void v1718_MultiWrite32(MVME_INTERFACE *mvme, DWORD *addrs, DWORD *value, int nc
 void v1718_PulserConfSet(MVME_INTERFACE *mvme, WORD pulser, DWORD period, DWORD width, WORD pulseNo);
 void v1718_PulserStart(MVME_INTERFACE *mvme, WORD pulser);
 void v1718_PulserStop(MVME_INTERFACE *mvme, WORD pulser);
+short v1718_GetFIFOMode(MVME_INTERFACE *mvme);
 
   enum v1718_PulserSelect {
     v1718_pulserA=0x0,
