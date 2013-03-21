@@ -64,35 +64,25 @@ int main(int argc, char** argv)
 
 	DWORD buff[100];
 	int i;
-	for (i = 0; i < 100; i++) 
-	{
-		buff[i] = 0;
-	}
 	int nword_read;
 
 	//DWORD nevt;
 	//v792_EvtCntRead(myvme,V792_BASE,&nevt);
 	//printf("nevt: %d\n",nevt);
 	do
-	{
 		usleep(1);
-	}
 	while (!(v792_DataReady(myvme,V792_BASE)));
-	nword_read = v792_EventReadBLT(myvme,V792_BASE,buff,&nword_read);
-	/*status = CAENVME_BLTReadCycle(myvme->handle, */
-			/*V792_BASE, buff, 36*4, 0x0f, cvD32, &nword_read);*/
+	v792_EventReadBLT(myvme,V792_BASE,buff,&nword_read);
 
-	printf("stt %d;nword_read %d\n",status,nword_read/4);
+	printf("nword_read %d\n",nword_read/4);
 
-	// blt trial
-	
 	//int i;
-	//for (i = 0; i < nword_read; i++) 
-	//{
-		//v792_printEntry((v792_Data*)&buff[i]);
+	for (i = 0; i < nword_read/4; i++) 
+	{
+		v792_printEntry((v792_Data*)&buff[i]);
 		//showbits(buff[i]);
 		//printf("\n");
-	//}
+	}
 
 	// Close
 	CAENVME_End(BHandle);

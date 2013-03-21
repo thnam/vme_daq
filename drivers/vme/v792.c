@@ -566,18 +566,12 @@ int v792_EventReadBLT(MVME_INTERFACE *mvme, DWORD base, DWORD *pdest, int *nentr
   mvme_get_dmode(mvme, &cmode);
   mvme_set_dmode(mvme, MVME_DMODE_D32);
 
-  *nentry = 0;
-	//unsigned int nread = tmp.header.cnt;
 	mvme_get_blt(mvme, &bltmode);
 	mvme_set_blt(mvme, MVME_BLT_BLT32FIFO);
 	nread = 39;
 	*nentry = mvme_read(mvme, pdest, base + 0x0, nread*4);
+
 	mvme_set_blt(mvme, bltmode);
-
-	int i;
-	for (i = 0; i < *nentry/4; i++) 
-		v792_printEntry((v792_Data*)&pdest[i]);
-
   mvme_set_dmode(mvme, cmode);
   return *nentry;
 }
