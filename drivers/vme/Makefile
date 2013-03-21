@@ -10,7 +10,7 @@ SRC_DIR    = $(MIDASSYS)/src
 DEPLIBS =       -lCAENVME 
 
 INCLUDEDIR =    -I. -I$(INC_DIR)
-OBJS    =  v1718.o test.o v792n.o
+OBJS    =  v1718.o test.o v792.o
 #########################################################################
 all :   $(EXE)
 

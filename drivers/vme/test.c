@@ -13,7 +13,7 @@
 #include "CAENVMElib.h"
 #include "mvmestd.h"
 #include "v1718.h"
-#include "v792n.h"
+#include "v792.h"
 #define V792_BASE  0x54320000
 void showbits(uint32_t data);
 
@@ -39,26 +39,31 @@ int main(int argc, char** argv)
 	mvme_set_am(myvme, MVME_AM_A32_ND);
 	usleep(100);
 
-	v792n_SoftReset(myvme,V792_BASE);
-	/*v792n_Setup(myvme,V792_BASE,2); //enable empty events, over range & under thr.*/
-	//v792n_OnlineSet(myvme, V792_BASE);
-	v792n_Status(myvme,V792_BASE);
-	sleep(5);
-	/*CAENVME_SetOutputConf(BHandle,cvOutput0,cvDirect,cvActiveHigh,cvManualSW);*/
+	v792_SoftReset(myvme,V792_BASE);
+	v792_Setup(myvme,V792_BASE,2); //enable empty events, over range & under thr.
+	int lam = v792_DataReady(myvme,V792_BASE);
+	printf("lam: %d\n",lam);
+	//v792_OnlineSet(myvme, V792_BASE);
+	/*v792_Status(myvme,V792_BASE);*/
+	//CAENVME_SetOutputConf(BHandle,cvOutput0,cvDirect,cvActiveHigh,cvManualSW);
 	v1718_PulserConfSet(myvme,v1718_pulserA,1000,200,1);
-	CVTimeUnits unit;
-	CVIOSources io,reset;
-	unsigned char per,wid,no;
-	WORD buff16;
-	CAENVME_GetPulserConf(BHandle,v1718_pulserA,&per,&wid,&unit,&no,&io,&reset);
-	printf("pulser A: %d %d %d %d %d %d \n",per,wid,unit,no,io,reset);
+	usleep(100);
 	v1718_PulserStart(myvme,v1718_pulserA);
-	/*CAENVME_ReadRegister(BHandle,cvPulserA0,&buff16);*/
-	/*showbits((uint32_t)buff16);*/
-	//usleep(10000000);
 	/*v1718_PulserStop(myvme,v1718_pulserA);*/
-	v792n_Status(myvme,V792_BASE);
-	//buff16 = v792n_Read16(myvme,V792_BASE,0x1000);
+	lam = v792_DataReady(myvme,V792_BASE);
+	printf("lam: %d\n",lam);
+	DWORD buff[100];
+	int nword_read;
+	v792_EventRead(myvme,V792_BASE,buff,&nword_read);
+	printf("nword_read %d\n",nword_read);
+
+	int i;
+	for (i = 0; i < nword_read; i++) 
+	{
+		v792_printEntry((v792_Data*)&buff[i]);
+		//showbits(buff[i]);
+		//printf("\n");
+	}
 
 	// Close
 	CAENVME_End(BHandle);
