@@ -211,15 +211,19 @@ int mvme_read(MVME_INTERFACE *vme, void *dst, mvme_addr_t vme_addr, mvme_size_t 
 				short cfifo;
 				CAENVME_GetFIFOMode(hvme, &cfifo);
 				status = CAENVME_SetFIFOMode(hvme, 1);
+				unsigned int tam = vme->am;
+				vme->am = cvA32_S_BLT;
 				status = CAENVME_FIFOBLTReadCycle(hvme, vme_addr, dst, n_bytes, vme->am, cvD32, &n);
 				CAENVME_SetFIFOMode(hvme,cfifo);
+				vme->am = tam;
 			}
       /* BLT */
       else
 			{
-         status = CAENVME_BLTReadCycle(hvme, vme_addr, dst, n_bytes, vme->am, cvD32, &n);
-				 //CAENVME_DecodeError(status);
-				//if (status == cvBusError) return n;
+				unsigned int tam = vme->am;
+				vme->am = cvA32_S_BLT;
+				status = CAENVME_BLTReadCycle(hvme, vme_addr, dst, n_bytes, vme->am, cvD32, &n);
+				vme->am = tam;
 			}
    /* D64 */
    } else if (vme->dmode == MVME_DMODE_D64) {

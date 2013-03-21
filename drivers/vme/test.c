@@ -39,21 +39,21 @@ int main(int argc, char** argv)
 	mvme_set_am(myvme, MVME_AM_A32_ND);
 	usleep(100);
 
-	v792_SoftReset(myvme,V792_BASE);
+	/*v792_SoftReset(myvme,V792_BASE);*/
 	v792_Setup(myvme,V792_BASE,2); //enable empty events, over range & under thr.
 	int lam = v792_DataReady(myvme,V792_BASE);
 	printf("lam: %d\n",lam);
-	v792_EvtCntReset(myvme,V792_BASE);
-	v792_DataClear(myvme,V792_BASE);
+	/*v792_EvtCntReset(myvme,V792_BASE);*/
+	/*v792_DataClear(myvme,V792_BASE);*/
 
 	//v792_Status(myvme,V792_BASE);
-	//WORD pat = v792_ControlRegister1Read(myvme,V792_BASE);
-	//showbits((uint32_t)pat); 
-	//printf("\n");
+	WORD pat = v792_ControlRegister1Read(myvme,V792_BASE);
+	showbits((uint32_t)pat); 
+	printf("\n");
 	v792_BusErrorEnable(myvme,V792_BASE);
-	//pat = v792_ControlRegister1Read(myvme,V792_BASE);
-	//showbits((uint32_t)pat);
-	//printf("\n");
+	pat = v792_ControlRegister1Read(myvme,V792_BASE);
+	showbits((uint32_t)pat);
+	printf("\n");
 	CAENVME_SetOutputConf(BHandle,cvOutput0,cvDirect,cvActiveHigh,cvManualSW);
 	v1718_PulserConfSet(myvme,v1718_pulserA,1000,200,1);
 	v1718_PulserStart(myvme,v1718_pulserA);
@@ -78,9 +78,11 @@ int main(int argc, char** argv)
 		usleep(1);
 	}
 	while (!(v792_DataReady(myvme,V792_BASE)));
-		nword_read = v792_EventReadBLT(myvme,V792_BASE,buff,&nword_read);
+	nword_read = v792_EventReadBLT(myvme,V792_BASE,buff,&nword_read);
+	/*status = CAENVME_BLTReadCycle(myvme->handle, */
+			/*V792_BASE, buff, 36*4, 0x0f, cvD32, &nword_read);*/
 
-	printf("nword_read %d\n",nword_read);
+	printf("stt %d;nword_read %d\n",status,nword_read/4);
 
 	// blt trial
 	
