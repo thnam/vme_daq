@@ -253,6 +253,15 @@ void v792_OnlineSet(MVME_INTERFACE *mvme, DWORD base)
   mvme_write_value(mvme, base+V792_BIT_CLEAR2_WO, 0x2);
   mvme_set_dmode(mvme, cmode);
 }
+/*****************************************************************/
+void v792_OfflineSet(MVME_INTERFACE *mvme, DWORD base)
+{
+  int cmode;
+  mvme_get_dmode(mvme, &cmode);
+  mvme_set_dmode(mvme, MVME_DMODE_D16);
+  mvme_write_value(mvme, base+V792_BIT_SET2_RW, 0x2);
+  mvme_set_dmode(mvme, cmode);
+}
 
 /*****************************************************************/
 void v792_LowThEnable(MVME_INTERFACE *mvme, DWORD base)

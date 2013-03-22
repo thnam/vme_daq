@@ -81,6 +81,7 @@ int  v792_isEvtReady(MVME_INTERFACE *mvme, DWORD base);
 void v792_EvtTriggerSet(MVME_INTERFACE *mvme, DWORD base, int count);
 void v792_DataClear(MVME_INTERFACE *mvme, DWORD base);
 void v792_OnlineSet(MVME_INTERFACE *mvme, DWORD base);
+void v792_OfflineSet(MVME_INTERFACE *mvme, DWORD base);
 void v792_LowThEnable(MVME_INTERFACE *mvme, DWORD base);
 void v792_LowThDisable(MVME_INTERFACE *mvme, DWORD base);
 void v792_EmptyEnable(MVME_INTERFACE *mvme, DWORD base);

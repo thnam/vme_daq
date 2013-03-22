@@ -97,7 +97,7 @@ MODULES    = adccalib.o adcsum.o scaler.o
 #-------------------------------------------------------------------
 # Drivers needed by the frontend program
 #
-FE_DRIVERS  = v1718.o v792n.o
+FE_DRIVERS  = v1718.o v792.o
 #FE_DRIVERS  = v792n.o v2718.o
 FE_LIBS     = -lCAENVME
 
@@ -151,6 +151,6 @@ analyzer: $(LIB) $(LIB_DIR)/rmana.o analyzer.o $(MODULES)
 	$(CXX) $(USERFLAGS) $(ROOTCFLAGS) $(CFLAGS) $(OSFLAGS) -o $@ -c $<
 
 clean::
-	rm -rf *.o *~ \#*
+	rm -rf *.o *~ \#* 
 
 #end file

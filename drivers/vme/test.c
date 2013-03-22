@@ -15,6 +15,8 @@
 #include "v1718.h"
 #include "v792.h"
 #define V792_BASE  0x54320000
+#define V775_BAse  0x64320000
+
 void showbits(uint32_t data);
 
 int main(int argc, char** argv)
@@ -57,9 +59,9 @@ int main(int argc, char** argv)
 	/*CAENVME_SetOutputConf(BHandle,cvOutput0,cvDirect,cvActiveHigh,cvManualSW);*/
 	/*CAENVME_SetOutputConf(BHandle,cvOutput3,cvDirect,cvActiveHigh,cvManualSW);*/
 	v1718_PulserConfSet(myvme,v1718_pulserA,1000,200,1);
-	v1718_PulserConfSet(myvme,v1718_pulserB,5000,100,4);
+	/*v1718_PulserConfSet(myvme,v1718_pulserB,5000,100,4);*/
 	v1718_PulserStart(myvme,v1718_pulserA);
-	v1718_PulserStart(myvme,v1718_pulserB);
+	/*v1718_PulserStart(myvme,v1718_pulserB);*/
 	v1718_PulserStop(myvme,v1718_pulserA);
 
 	lam = v792_DataReady(myvme,V792_BASE);

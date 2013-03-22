@@ -2,16 +2,16 @@
 
   Name:         frontend.c
   Created by:   Jimmy Ngai
-
   Date:         May 9, 2010
+
+	Modified by:  Tran Hoai Nam 
+	Date: 2013-03-22
 
   Contents:     Experiment specific readout code (user part) of
                 Midas frontend.
 		Supported VME modules:
 		CAEN V1718 VME-USB Bridge
-		CAEN V792N 16 CH QDC
-
-  $Id: $
+		CAEN v792 32 CH QDC
 
 \********************************************************************/
 
@@ -21,7 +21,8 @@
 #include "mcstd.h"
 #include "mvmestd.h"
 //#include "experim.h"
-#include "vme/v792n.h"
+#include "vme/v792.h"
+#include "vme/v1718.h"
 
 /* make frontend functions callable from the C framework */
 #ifdef __cplusplus
@@ -57,8 +58,8 @@ INT event_buffer_size = 10 * 10000;
 MVME_INTERFACE *myvme;
 
 /* VME base address */
-DWORD V1718_BASE  = 0x12000000;
-DWORD V792N_BASE  = 0x32100000;
+/*DWORD V1718_BASE  = 0x12000000;*/
+DWORD V792_BASE  = 0x54320000;
 
 /*-- Function declarations -----------------------------------------*/
 
@@ -69,6 +70,7 @@ INT end_of_run(INT run_number, char *error);
 INT pause_run(INT run_number, char *error);
 INT resume_run(INT run_number, char *error);
 INT frontend_loop();
+INT computer_busy(int busy);
 
 INT read_trigger_event(char *pevent, INT off);
 
@@ -138,9 +140,9 @@ INT init_vme_modules()
 {
    /* default settings */
 
-   v792n_SoftReset(myvme, V792N_BASE);
-   v792n_Setup(myvme, V792N_BASE, 2);
-//   v792n_Status(myvme, V792N_BASE);
+   v792_SoftReset(myvme, V792_BASE);
+   v792_Setup(myvme, V792_BASE, 2);
+//   v792_Status(myvme, V792_BASE);
 
    return SUCCESS;
 }
@@ -157,11 +159,15 @@ INT frontend_init()
    /* set am to A32 non-privileged Data */
    mvme_set_am(myvme, MVME_AM_A32_ND);
 
+	 /*CAENVME_SetOutputConf(BHandle,cvOutput0,cvDirect,cvActiveHigh,cvManualSW);*/
+	 v792_BusErrorEnable(myvme,V792_BASE);
+	 v1718_PulserConfSet(myvme,v1718_pulserA,1000,200,0);
+	 computer_busy(1);
    /* initialize all VME modules */
    init_vme_modules();
 
-   v792n_OfflineSet(myvme, V792N_BASE);
-   v792n_DataClear(myvme, V792N_BASE);
+   v792_OfflineSet(myvme, V792_BASE);
+   v792_DataClear(myvme, V792_BASE);
 
    /* print message and return FE_ERR_HW if frontend should not be started */
    if (status != MVME_SUCCESS) {
@@ -187,11 +193,12 @@ INT frontend_exit()
 INT begin_of_run(INT run_number, char *error)
 {
    /* Initialize all VME modules */
-//   init_vme_modules();
+	 init_vme_modules();
 
-   v792n_DataClear(myvme, V792N_BASE);
-   v792n_OnlineSet(myvme, V792N_BASE);
+   v792_DataClear(myvme, V792_BASE);
+   v792_OnlineSet(myvme, V792_BASE);
 
+	 computer_busy(0);
    return SUCCESS;
 }
 
@@ -199,8 +206,8 @@ INT begin_of_run(INT run_number, char *error)
 
 INT end_of_run(INT run_number, char *error)
 {
-   v792n_OfflineSet(myvme, V792N_BASE);
-   v792n_DataClear(myvme, V792N_BASE);
+   v792_OfflineSet(myvme, V792_BASE);
+   v792_DataClear(myvme, V792_BASE);
 
    return SUCCESS;
 }
@@ -209,7 +216,7 @@ INT end_of_run(INT run_number, char *error)
 
 INT pause_run(INT run_number, char *error)
 {
-   v792n_OfflineSet(myvme, V792N_BASE);
+   v792_OfflineSet(myvme, V792_BASE);
 
    return SUCCESS;
 }
@@ -218,7 +225,7 @@ INT pause_run(INT run_number, char *error)
 
 INT resume_run(INT run_number, char *error)
 {
-   v792n_OnlineSet(myvme, V792N_BASE);
+   v792_OnlineSet(myvme, V792_BASE);
 
    return SUCCESS;
 }
@@ -252,11 +259,14 @@ INT poll_event(INT source, INT count, BOOL test)
    DWORD lam = 0;
 
    for (i = 0; i < count; i++) {
-      lam = v792n_DataReady(myvme, V792N_BASE);
+      lam = v792_DataReady(myvme, V792_BASE);
 
       if (lam)
          if (!test)
-            return lam;
+				 {
+					 computer_busy(1);
+					 return lam;
+				 }
    }
 
    return 0;
@@ -281,21 +291,21 @@ INT interrupt_configure(INT cmd, INT source, POINTER_T adr)
 
 /*-- Event readout -------------------------------------------------*/
 
-INT read_v792n(INT base, const char *bk_name, char *pevent, INT n_chn)
+INT read_v792(INT base, const char *bk_name, char *pevent, INT n_chn)
 {
    INT i;
    INT nentry = 0; 
-   DWORD data[V792N_MAX_CHANNELS+2];
+   DWORD data[V792_MAX_CHANNELS+3];
    WORD *pdata;
 
    /* event counter */
-//   v792n_EvtCntRead(myvme, base, &counter);
+//   v792_EvtCntRead(myvme, base, &counter);
 
    /* read event */
-   v792n_EventRead(myvme, base, data, &nentry);
+   v792_EventRead(myvme, base, data, &nentry);
 
    /* clear ADC */
-//   v792n_DataClear(myvme, base);
+	 v792_DataClear(myvme, base);
 
    /* create ADC bank */
    bk_create(pevent, bk_name, TID_WORD, &pdata);
@@ -324,7 +334,18 @@ INT read_trigger_event(char *pevent, INT off)
    /* init bank structure */
    bk_init(pevent);
 
-   read_v792n(V792N_BASE, "ADC0", pevent, N_ADC);
+   read_v792(V792_BASE, "ADC0", pevent, N_ADC);
 
+	 computer_busy(0);
    return bk_size(pevent);
+}
+
+// simple computer busy logic
+INT computer_busy(int busy) 
+{
+	if (busy) 
+		v1718_PulserStop(myvme,v1718_pulserA);
+	else
+		v1718_PulserStart(myvme,v1718_pulserA);
+	return busy;
 }
