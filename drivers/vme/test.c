@@ -54,9 +54,12 @@ int main(int argc, char** argv)
 	pat = v792_ControlRegister1Read(myvme,V792_BASE);
 	showbits((uint32_t)pat);
 	printf("\n");
-	CAENVME_SetOutputConf(BHandle,cvOutput0,cvDirect,cvActiveHigh,cvManualSW);
+	/*CAENVME_SetOutputConf(BHandle,cvOutput0,cvDirect,cvActiveHigh,cvManualSW);*/
+	/*CAENVME_SetOutputConf(BHandle,cvOutput3,cvDirect,cvActiveHigh,cvManualSW);*/
 	v1718_PulserConfSet(myvme,v1718_pulserA,1000,200,1);
+	v1718_PulserConfSet(myvme,v1718_pulserB,5000,100,4);
 	v1718_PulserStart(myvme,v1718_pulserA);
+	v1718_PulserStart(myvme,v1718_pulserB);
 	v1718_PulserStop(myvme,v1718_pulserA);
 
 	lam = v792_DataReady(myvme,V792_BASE);
